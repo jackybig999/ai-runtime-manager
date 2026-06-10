@@ -5,6 +5,7 @@
 
 [![License](https://img.shields.io/badge/license-BSL%201.1-blue)](./LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
+[![Verify](https://github.com/jackybig999/ai-runtime-manager/actions/workflows/verify.yml/badge.svg)](https://github.com/jackybig999/ai-runtime-manager/actions)
 
 ---
 

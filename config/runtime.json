@@ -1,0 +1,8 @@
+{
+  "autoDetectProxy": true,
+  "preferHttpProxy": true,
+  "autoLaunch": null,
+  "logLevel": "info",
+  "proxyTimeout": 5000,
+  "verifyProxy": true
+}

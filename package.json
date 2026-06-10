@@ -1,0 +1,40 @@
+{
+  "name": "ai-runtime-manager",
+  "version": "0.1.0",
+  "description": "AI Runtime Manager CLI - Auto-detect local proxy and launch AI tools",
+  "main": "src/main.js",
+  "type": "module",
+  "bin": {
+    "arm": "bin/arm"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "locales/",
+    "config/"
+  ],
+  "scripts": {
+    "start": "node src/main.js",
+    "start:claude": "node src/main.js claude",
+    "start:codex": "node src/main.js codex"
+  },
+  "keywords": [
+    "proxy",
+    "claude",
+    "codex",
+    "ai",
+    "runtime",
+    "launcher",
+    "cli"
+  ],
+  "author": "jackybig <jacky_big@outlook.com>",
+  "license": "BSL-1.1",
+  "dependencies": {
+    "axios": "^1.7.2",
+    "chalk": "^5.3.0",
+    "minimist": "^1.2.8"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "claude": {
+    "command": "claude",
+    "args": [],
+    "type": "cli",
+    "proxyEnv": ["HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY"],
+    "cwd": ""
+  },
+  "codex": {
+    "command": "codex",
+    "args": [],
+    "type": "cli",
+    "proxyEnv": ["HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY"],
+    "cwd": ""
+  },
+  "chrome": {
+    "command": "chrome",
+    "args": ["--no-first-run", "--no-default-browser-check"],
+    "type": "browser",
+    "proxyFlag": "--proxy-server",
+    "proxyEnv": [],
+    "cwd": ""
+  }
+}

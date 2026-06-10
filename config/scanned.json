@@ -1,0 +1,26 @@
+{
+  "cli": {
+    "claude": {
+      "command": "C:\\Users\\Administrator\\.local\\bin\\claude.exe",
+      "found": true
+    },
+    "codex": {
+      "command": "C:\\Program Files\\nodejs\\codex",
+      "found": true
+    }
+  },
+  "desktop": {},
+  "browsers": [
+    {
+      "key": "chrome",
+      "name": "Chrome",
+      "command": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+    },
+    {
+      "key": "edge",
+      "name": "Edge",
+      "command": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe"
+    }
+  ],
+  "scannedAt": "2026-05-27T09:12:43.393Z"
+}

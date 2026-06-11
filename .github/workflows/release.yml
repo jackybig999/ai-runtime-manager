@@ -13,7 +13,7 @@ jobs:
           - os: windows-latest
             target: bun-windows-x64
             artifact: arm-win-x64.exe
-          - os: macos-13
+          - os: macos-latest
             target: bun-darwin-x64
             artifact: arm-macos-x64
           - os: macos-latest

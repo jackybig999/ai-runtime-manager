@@ -126,9 +126,15 @@ export async function runInteractive() {
   }
 }
 
-// Auto-run when executed directly
-const __mainFile = fileURLToPath(import.meta.url)
-if (process.argv[1] === __mainFile) {
+// Auto-run when executed directly or compiled to standalone binary
+const __mainFile = fileURLToPath(import.meta.url).replace(/\\/g, '/')
+const __argv1 = (process.argv[1] || '').replace(/\\/g, '/')
+const __argv0 = (process.argv[0] || '').replace(/\\/g, '/')
+const isCompiled = __argv0.endsWith('.exe') || __argv0 === process.argv[0]  // compiled: argv[1] may be empty
+const isMain = __argv1 === __mainFile
+            || __argv1.endsWith('/src/main.js')
+            || (isCompiled && !__argv1.includes('node'))
+if (isMain) {
   runInteractive().catch((err) => {
     console.error(chalk.red(`${t('launchFailed')}: ${err.message}`))
     process.exit(1)

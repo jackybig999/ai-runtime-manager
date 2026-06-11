@@ -11,15 +11,69 @@ const execAsync = promisify(exec)
 
 // ─── PID detection (Windows CLI tools run inside cmd.exe windows) ─────────────
 
-export async function findNewCmdPid() {
-  await new Promise(r => setTimeout(r, 800))
+export async function snapshotCmdPids() {
   try {
     const { stdout } = await execAsync(
-      `powershell -Command "(Get-Process cmd | Sort-Object StartTime -Descending | Select-Object -First 1).Id"`,
+      `powershell -Command "(Get-Process cmd -ErrorAction SilentlyContinue).Id"`,
       { timeout: 3000, windowsHide: true }
     )
-    return parseInt(stdout.trim()) || null
+    const pids = new Set()
+    stdout.trim().split(/\s+/).forEach(s => { const n = parseInt(s); if (n) pids.add(n) })
+    return pids
+  } catch { return new Set() }
+}
+
+export async function findNewCmdPid(before) {
+  // Wait for intermediate shell (spawn shell:true) to die.
+  // The intermediate cmd.exe runs `start` and exits shortly after.
+  await new Promise(r => setTimeout(r, 1500))
+
+  if (!before) {
+    // No snapshot: return the most recently started cmd PID
+    try {
+      const { stdout } = await execAsync(
+        `powershell -Command "(Get-Process cmd | Sort-Object StartTime -Descending | Select-Object -First 1).Id"`,
+        { timeout: 3000, windowsHide: true }
+      )
+      return parseInt(stdout.trim()) || null
+    } catch { return null }
+  }
+
+  // Collect ALL new PIDs (may include intermediate shell ghost)
+  const allNew = []
+  try {
+    const { stdout } = await execAsync(
+      `powershell -Command "(Get-Process cmd -ErrorAction SilentlyContinue).Id"`,
+      { timeout: 3000, windowsHide: true }
+    )
+    stdout.trim().split(/\s+/).forEach(s => {
+      const n = parseInt(s)
+      if (n && !before.has(n)) allNew.push(n)
+    })
   } catch { return null }
+
+  if (allNew.length === 0) return null
+  if (allNew.length === 1) return allNew[0]
+
+  // Multiple new PIDs: wait for ghosts to die, return first still-alive
+  await new Promise(r => setTimeout(r, 1000))
+  try {
+    const { stdout } = await execAsync(
+      `powershell -Command "(Get-Process cmd -ErrorAction SilentlyContinue).Id"`,
+      { timeout: 3000, windowsHide: true }
+    )
+    const alive = new Set()
+    stdout.trim().split(/\s+/).forEach(s => {
+      const n = parseInt(s)
+      if (n) alive.add(n)
+    })
+    for (const pid of allNew) {
+      if (alive.has(pid)) return pid
+    }
+  } catch {}
+
+  // Fallback: return last one (intermediate usually exits first)
+  return allNew[allNew.length - 1]
 }
 
 export async function isPidAlive(pid) {

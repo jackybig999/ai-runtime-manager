@@ -5,7 +5,7 @@ import chalk from 'chalk'
 import { fileURLToPath } from 'url'
 import processManager from './core/launcher/processManager.js'
 import { t } from './i18n/index.js'
-import { findNewCmdPid } from './core/toolLifecycle.js'
+import { findNewCmdPid, snapshotCmdPids } from './core/toolLifecycle.js'
 import {
   printBanner, printInfo, askNumber,
   selectLanguage, selectProxyStep, selectCwdStep, confirmAndLaunch
@@ -102,10 +102,11 @@ export async function runInteractive() {
       if (choice === 1 || choice === 2) {
         const toolName = choice === 1 ? 'claude' : 'codex'
         const cwd = await selectCwdStep(rl)
+        const beforePids = process.platform === 'win32' ? await snapshotCmdPids() : null
         const launched = await confirmAndLaunch(rl, toolName, proxy, cwd)
 
         if (launched) {
-          const pid = await findNewCmdPid()
+          const pid = process.platform === 'win32' ? await findNewCmdPid(beforePids) : launched.pid
           toolSessions.set(toolName, { proxy, cwd, pid })
           console.log(chalk.gray(`  ${t('toolRunning')}`))
           console.log()

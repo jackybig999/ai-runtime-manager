@@ -7,6 +7,7 @@ import { launchApp } from './appLauncher.js'
 import processManager from './processManager.js'
 import { resolveCommand } from '../utils/platform.js'
 import logger from '../utils/logger.js'
+import embeddedAppsConfig from '../../../config/apps.json' with { type: 'json' }
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const appsPath = path.resolve(__dirname, '../../../config/apps.json')
@@ -25,9 +26,8 @@ export async function launchBrowser(proxy, options = {}) {
   let config
   try {
     config = JSON.parse(fs.readFileSync(appsPath, 'utf-8'))
-  } catch (err) {
-    logger.error(`Failed to read apps.json: ${err.message}`)
-    config = {}
+  } catch {
+    config = embeddedAppsConfig
   }
 
   const appConfig = config[appKey] || {

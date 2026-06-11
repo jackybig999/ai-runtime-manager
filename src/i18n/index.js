@@ -1,28 +1,25 @@
 // SPDX-License-Identifier: BSL-1.1
 // Copyright (c) 2026 jackybig <jacky_big@outlook.com>
+import en from '../../locales/en.json' with { type: 'json' }
+import zhCN from '../../locales/zh-CN.json' with { type: 'json' }
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const localesDir = path.resolve(__dirname, '../../locales')
+const dictionaries = { en, 'zh-CN': zhCN }
 
-const dictionaries = {}
-
-function loadLocales() {
-  try {
-    const files = fs.readdirSync(localesDir).filter(f => f.endsWith('.json'))
-    for (const file of files) {
-      const lang = file.replace('.json', '')
-      const content = fs.readFileSync(path.join(localesDir, file), 'utf-8')
-      dictionaries[lang] = JSON.parse(content)
+// Load extra locale files from disk (for development; embedded mode skips this)
+try {
+  const __dirname = path.dirname(fileURLToPath(import.meta.url))
+  const localesDir = path.resolve(__dirname, '../../locales')
+  const files = fs.readdirSync(localesDir).filter(f => f.endsWith('.json'))
+  for (const file of files) {
+    const lang = file.replace('.json', '')
+    if (!dictionaries[lang]) {
+      dictionaries[lang] = JSON.parse(fs.readFileSync(path.join(localesDir, file), 'utf-8'))
     }
-  } catch (err) {
-    console.error('Failed to load locales:', err.message)
   }
-}
-
-loadLocales()
+} catch { /* compiled mode: locales embedded via import, disk read skipped */ }
 
 let currentLang = 'en'
 

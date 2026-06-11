@@ -9,6 +9,7 @@ import { launchApp } from './appLauncher.js'
 import processManager from './processManager.js'
 import { resolveCommand, isProcessRunning } from '../utils/platform.js'
 import logger from '../utils/logger.js'
+import embeddedAppsConfig from '../../../config/apps.json' with { type: 'json' }
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const appsPath = path.resolve(__dirname, '../../../config/apps.json')
@@ -24,9 +25,9 @@ export async function launchTool(name, proxy, options = {}) {
   let config
   try {
     config = JSON.parse(fs.readFileSync(appsPath, 'utf-8'))
-  } catch (err) {
-    logger.error(`Failed to read apps.json: ${err.message}`)
-    config = { [name]: { command: name, args: [], type: 'cli' } }
+  } catch {
+    // Use embedded config (compiled mode or missing file)
+    config = embeddedAppsConfig
   }
 
   const appConfig = config[name] || { command: name, args: [], cwd: '' }
